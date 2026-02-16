@@ -1,63 +1,143 @@
-body {
+/* GOOGLE FONT */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* RESET */
+* {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #0f172a;
-    color: white;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY WITH ANIMATED GRADIENT */
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+    background-size: 600% 600%;
+    animation: bgAnimation 15s ease infinite;
+    color: #fff;
     text-align: center;
 }
 
+/* BACKGROUND ANIMATION */
+@keyframes bgAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* TITLE */
 h1 {
-    padding: 20px;
+    margin: 30px 0;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #facc15, #22c55e, #3b82f6);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textGlow 3s linear infinite;
 }
 
+/* TEXT ANIMATION */
+@keyframes textGlow {
+    0% { background-position: 0%; }
+    100% { background-position: 200%; }
+}
+
+/* SEARCH BOX */
 .search-box {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
+/* INPUT */
 input {
-    padding: 10px;
-    width: 250px;
-    border-radius: 5px;
+    padding: 12px;
+    width: 260px;
+    border-radius: 8px;
     border: none;
+    outline: none;
+    font-size: 16px;
 }
 
+/* BUTTON */
 button {
-    padding: 10px 15px;
+    padding: 12px 20px;
+    margin-left: 10px;
+    border-radius: 8px;
     border: none;
-    background-color: #22c55e;
-    color: black;
-    font-weight: bold;
-    border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(90deg, #22c55e, #16a34a, #22c55e);
+    background-size: 200%;
+    transition: transform 0.3s ease;
+    animation: buttonGlow 2s linear infinite;
 }
 
+/* BUTTON HOVER */
 button:hover {
-    background-color: #16a34a;
+    transform: scale(1.1);
 }
 
+/* BUTTON ANIMATION */
+@keyframes buttonGlow {
+    0% { background-position: 0%; }
+    100% { background-position: 200%; }
+}
+
+/* MOVIE CONTAINER */
 #movie-container {
     display: flex;
     justify-content: center;
     padding: 20px;
 }
 
+/* MOVIE CARD */
 .movie-card {
-    background-color: #1e293b;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
     padding: 20px;
-    width: 320px;
-    border-radius: 10px;
+    width: 340px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+    animation: cardFloat 4s ease-in-out infinite;
 }
 
+/* CARD FLOATING EFFECT */
+@keyframes cardFloat {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+/* POSTER */
 .movie-card img {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 12px;
+    margin-bottom: 15px;
 }
 
+/* TEXT */
 .movie-card h2 {
+    margin-bottom: 10px;
+}
+
+.movie-card p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* RATING */
+.rating {
+    font-size: 18px;
+    font-weight: bold;
+    color: gold;
     margin: 10px 0;
 }
 
-.rating {
-    color: gold;
-    font-size: 18px;
+/* RESPONSIVE */
+@media (max-width: 500px) {
+    input {
+        width: 180px;
+    }
 }
