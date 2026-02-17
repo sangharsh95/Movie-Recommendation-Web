@@ -17,7 +17,7 @@ const topImdbTitle = document.getElementById("top-imdb-title");
 
 let debounceTimer;
 
-/* PAGE LOAD */
+/* Page load */
 window.addEventListener("load", () => {
     showHomeSections();
     loadDefaultRecommendations();
@@ -26,69 +26,43 @@ window.addEventListener("load", () => {
     loadTopIMDb();
 });
 
-/* VISIBILITY */
+/* Visibility */
 function hideHomeSections() {
-    nowPlayingContainer.style.display = "none";
-    indiaMoviesContainer.style.display = "none";
-    topImdbContainer.style.display = "none";
-
-    nowPlayingTitle.style.display = "none";
-    indiaTitle.style.display = "none";
-    topImdbTitle.style.display = "none";
+    [nowPlayingContainer, indiaMoviesContainer, topImdbContainer].forEach(c => c.style.display = "none");
+    [nowPlayingTitle, indiaTitle, topImdbTitle].forEach(t => t.style.display = "none");
 }
 
 function showHomeSections() {
-    nowPlayingContainer.style.display = "flex";
-    indiaMoviesContainer.style.display = "flex";
-    topImdbContainer.style.display = "flex";
-
-    nowPlayingTitle.style.display = "block";
-    indiaTitle.style.display = "block";
-    topImdbTitle.style.display = "block";
+    [nowPlayingContainer, indiaMoviesContainer, topImdbContainer].forEach(c => c.style.display = "flex");
+    [nowPlayingTitle, indiaTitle, topImdbTitle].forEach(t => t.style.display = "block");
 }
 
-/* HOME DATA */
+/* Load sections */
 function loadDefaultRecommendations() {
-    fetchMovies("Avengers", recommendContainer, 6, "Recommended Movies");
+    fetchMovies("Avengers", recommendContainer, 8, "Recommended Movies");
 }
 
 function loadNowPlaying() {
-    ["2024", "2023", "Marvel", "DC"].forEach(k =>
-        fetchMovies(k, nowPlayingContainer, 2)
-    );
+    ["2024", "2023", "Marvel", "DC"].forEach(k => fetchMovies(k, nowPlayingContainer, 3));
 }
 
 function loadIndianMovies() {
-    ["Bollywood", "Hindi", "Telugu", "Tamil"].forEach(k =>
-        fetchMovies(k, indiaMoviesContainer, 2)
-    );
+    ["Bollywood", "Hindi", "Telugu", "Tamil"].forEach(k => fetchMovies(k, indiaMoviesContainer, 3));
 }
 
 function loadTopIMDb() {
-    [
-        "The Shawshank Redemption",
-        "The Godfather",
-        "The Dark Knight",
-        "12 Angry Men",
-        "Schindler's List",
-        "Inception",
-        "Dangal",
-        "3 Idiots"
-    ].forEach(title => {
-        fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&t=${title}`)
-            .then(res => res.json())
-            .then(movie => {
-                if (movie.Response === "False") return;
-                createCard(movie, topImdbContainer, true);
-            });
-    });
+    ["The Shawshank Redemption", "The Godfather", "The Dark Knight", "Dangal", "3 Idiots"]
+        .forEach(title => {
+            fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&t=${title}`)
+                .then(res => res.json())
+                .then(m => m.Response !== "False" && createCard(m, topImdbContainer, true));
+        });
 }
 
-/* FAST SEARCH */
+/* Search (debounced) */
 input.addEventListener("input", () => {
     clearTimeout(debounceTimer);
     const q = input.value.trim();
-
     if (q.length < 2) {
         suggestionsBox.innerHTML = "";
         return;
@@ -101,57 +75,45 @@ input.addEventListener("input", () => {
                 if (data.Response === "False") return;
                 suggestionsBox.innerHTML = "";
                 data.Search.forEach(m => {
-                    const div = document.createElement("div");
-                    div.className = "suggestion-item";
-                    div.innerText = m.Title;
-                    div.onclick = () => {
-                        input.value = m.Title;
-                        suggestionsBox.innerHTML = "";
-                        loadMovie(m.Title);
-                    };
-                    suggestionsBox.appendChild(div);
+                    const d = document.createElement("div");
+                    d.className = "suggestion-item";
+                    d.innerText = m.Title;
+                    d.onclick = () => loadMovie(m.Title);
+                    suggestionsBox.appendChild(d);
                 });
             });
     }, 300);
 });
 
-searchBtn.addEventListener("click", () => loadMovie(input.value));
-input.addEventListener("keydown", e => {
-    if (e.key === "Enter") loadMovie(input.value);
-});
+searchBtn.onclick = () => loadMovie(input.value);
+input.addEventListener("keydown", e => e.key === "Enter" && loadMovie(input.value));
 
-/* MOVIE DETAILS */
+/* Load movie */
 function loadMovie(title) {
     if (!title) return;
-
     hideHomeSections();
 
     fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&t=${title}`)
         .then(res => res.json())
-        .then(data => {
-            if (data.Response === "False") return;
+        .then(m => {
+            if (m.Response === "False") return;
 
             movieContainer.innerHTML = `
                 <div class="movie-card">
-                    <img src="${data.Poster}">
-                    <h2>${data.Title}</h2>
-                    <p><strong>Genre:</strong> ${data.Genre}</p>
-                    <p class="rating">⭐ IMDb: ${data.imdbRating}</p>
-                    <p>${data.Plot}</p>
+                    <img src="${m.Poster}">
+                    <h2>${m.Title}</h2>
+                    <p><strong>Genre:</strong> ${m.Genre}</p>
+                    <p class="rating">⭐ IMDb: ${m.imdbRating}</p>
+                    <p>${m.Plot}</p>
                 </div>
             `;
 
-            fetchMovies(
-                data.Genre.split(",")[0],
-                recommendContainer,
-                6,
-                `Recommended ${data.Genre.split(",")[0]} Movies`
-            );
+            fetchMovies(m.Genre.split(",")[0], recommendContainer, 8, `Recommended ${m.Genre.split(",")[0]} Movies`);
         });
 }
 
-/* HELPERS */
-function fetchMovies(keyword, container, limit = 6, titleText = "") {
+/* Helpers */
+function fetchMovies(keyword, container, limit, titleText) {
     if (titleText) recommendTitle.innerText = titleText;
     container.innerHTML = "";
 
@@ -159,20 +121,27 @@ function fetchMovies(keyword, container, limit = 6, titleText = "") {
         .then(res => res.json())
         .then(data => {
             if (data.Response === "False") return;
-            data.Search.slice(0, limit).forEach(m =>
-                createCard(m, container)
-            );
+            data.Search.slice(0, limit).forEach(m => createCard(m, container));
         });
 }
 
 function createCard(movie, container, showRating = false) {
-    const div = document.createElement("div");
-    div.className = "recommend-card";
-    div.innerHTML = `
+    const d = document.createElement("div");
+    d.className = "recommend-card";
+    d.innerHTML = `
         <img src="${movie.Poster}">
         <p>${movie.Title}</p>
         ${showRating ? `<p class="rating">⭐ ${movie.imdbRating}</p>` : ""}
     `;
-    div.onclick = () => loadMovie(movie.Title);
-    container.appendChild(div);
+    d.onclick = () => loadMovie(movie.Title);
+    container.appendChild(d);
+}
+
+/* Carousel scroll */
+function scrollLeft(id) {
+    document.getElementById(id).scrollLeft -= 300;
+}
+
+function scrollRight(id) {
+    document.getElementById(id).scrollLeft += 300;
 }
