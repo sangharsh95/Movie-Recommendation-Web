@@ -2,19 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Movie Info Website</title>
+    <title>CineChoice – A Movie Recommender</title>
+
+    <!-- IMPORTANT FOR MOBILE -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>🎬 Movie Information Website</h1>
+<header>
+    <h1>🎬 CineChoice</h1>
+    <p class="tagline">A Movie Recommender</p>
 
-<div class="search-box">
-    <input type="text" id="movieInput" placeholder="Enter movie name">
-    <button onclick="getMovie()">Search</button>
-</div>
+    <div class="search-box">
+        <input
+            type="text"
+            id="movieInput"
+            placeholder="Search movies like Avatar, Dangal, Inception..."
+        >
+        <button id="searchBtn">Search</button>
+    </div>
 
-<div id="movie-container"></div>
+    <div id="suggestions"></div>
+</header>
+
+<main>
+    <div id="movie-container"></div>
+
+    <h2 id="recommend-title"></h2>
+    <div id="recommend-container"></div>
+
+    <h2 id="now-playing-title">🔥 Now Playing</h2>
+    <div id="now-playing"></div>
+
+    <h2 id="india-title">🇮🇳 Popular Indian Movies</h2>
+    <div id="india-movies"></div>
+
+    <h2 id="top-imdb-title">🏆 Highest IMDb Rated Movies</h2>
+    <div id="top-imdb"></div>
+</main>
 
 <script src="script.js"></script>
 </body>
