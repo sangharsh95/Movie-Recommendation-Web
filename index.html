@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>CineChoice – A Movie Recommender</title>
 
-    <!-- IMPORTANT FOR MOBILE -->
+    <!-- Mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="style.css">
@@ -28,19 +28,37 @@
 </header>
 
 <main>
+
     <div id="movie-container"></div>
 
     <h2 id="recommend-title"></h2>
-    <div id="recommend-container"></div>
+    <div class="movie-row">
+        <button class="scroll-btn scroll-left" onclick="scrollLeft('recommend-container')">◀</button>
+        <div id="recommend-container" class="movie-scroll"></div>
+        <button class="scroll-btn scroll-right" onclick="scrollRight('recommend-container')">▶</button>
+    </div>
 
     <h2 id="now-playing-title">🔥 Now Playing</h2>
-    <div id="now-playing"></div>
+    <div class="movie-row">
+        <button class="scroll-btn scroll-left" onclick="scrollLeft('now-playing')">◀</button>
+        <div id="now-playing" class="movie-scroll"></div>
+        <button class="scroll-btn scroll-right" onclick="scrollRight('now-playing')">▶</button>
+    </div>
 
     <h2 id="india-title">🇮🇳 Popular Indian Movies</h2>
-    <div id="india-movies"></div>
+    <div class="movie-row">
+        <button class="scroll-btn scroll-left" onclick="scrollLeft('india-movies')">◀</button>
+        <div id="india-movies" class="movie-scroll"></div>
+        <button class="scroll-btn scroll-right" onclick="scrollRight('india-movies')">▶</button>
+    </div>
 
     <h2 id="top-imdb-title">🏆 Highest IMDb Rated Movies</h2>
-    <div id="top-imdb"></div>
+    <div class="movie-row">
+        <button class="scroll-btn scroll-left" onclick="scrollLeft('top-imdb')">◀</button>
+        <div id="top-imdb" class="movie-scroll"></div>
+        <button class="scroll-btn scroll-right" onclick="scrollRight('top-imdb')">▶</button>
+    </div>
+
 </main>
 
 <script src="script.js"></script>
