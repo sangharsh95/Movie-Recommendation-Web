@@ -16,8 +16,9 @@ const indiaTitle = document.getElementById("india-title");
 const topImdbTitle = document.getElementById("top-imdb-title");
 
 let debounceTimer;
+let recommendationKeyword = ""; // 🔒 LOCKED KEYWORD
 
-/* Page load */
+/* ================= PAGE LOAD ================= */
 window.addEventListener("load", () => {
     showHomeSections();
     loadDefaultRecommendations();
@@ -26,7 +27,7 @@ window.addEventListener("load", () => {
     loadTopIMDb();
 });
 
-/* Visibility */
+/* ================= VISIBILITY ================= */
 function hideHomeSections() {
     [nowPlayingContainer, indiaMoviesContainer, topImdbContainer].forEach(c => c.style.display = "none");
     [nowPlayingTitle, indiaTitle, topImdbTitle].forEach(t => t.style.display = "none");
@@ -37,29 +38,7 @@ function showHomeSections() {
     [nowPlayingTitle, indiaTitle, topImdbTitle].forEach(t => t.style.display = "block");
 }
 
-/* Load sections */
-function loadDefaultRecommendations() {
-    fetchMovies("Avengers", recommendContainer, 8, "Recommended Movies");
-}
-
-function loadNowPlaying() {
-    ["2024", "2023", "Marvel", "DC"].forEach(k => fetchMovies(k, nowPlayingContainer, 3));
-}
-
-function loadIndianMovies() {
-    ["Bollywood", "Hindi", "Telugu", "Tamil"].forEach(k => fetchMovies(k, indiaMoviesContainer, 3));
-}
-
-function loadTopIMDb() {
-    ["The Shawshank Redemption", "The Godfather", "The Dark Knight", "Dangal", "3 Idiots"]
-        .forEach(title => {
-            fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&t=${title}`)
-                .then(res => res.json())
-                .then(m => m.Response !== "False" && createCard(m, topImdbContainer, true));
-        });
-}
-
-/* Search (debounced) */
+/* ================= SEARCH (DEBOUNCE) ================= */
 input.addEventListener("input", () => {
     clearTimeout(debounceTimer);
     const q = input.value.trim();
@@ -73,47 +52,119 @@ input.addEventListener("input", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.Response === "False") return;
+
                 suggestionsBox.innerHTML = "";
                 data.Search.forEach(m => {
-                    const d = document.createElement("div");
-                    d.className = "suggestion-item";
-                    d.innerText = m.Title;
-                    d.onclick = () => loadMovie(m.Title);
-                    suggestionsBox.appendChild(d);
+                    const div = document.createElement("div");
+                    div.className = "suggestion-item";
+                    div.innerText = m.Title;
+                    div.onclick = () => {
+                        input.value = m.Title;
+                        suggestionsBox.innerHTML = "";
+                        searchMovie(q, m.Title);
+                    };
+                    suggestionsBox.appendChild(div);
                 });
             });
     }, 300);
 });
 
-searchBtn.onclick = () => loadMovie(input.value);
-input.addEventListener("keydown", e => e.key === "Enter" && loadMovie(input.value));
+searchBtn.onclick = () => searchMovie(input.value, input.value);
+input.addEventListener("keydown", e => {
+    if (e.key === "Enter") searchMovie(input.value, input.value);
+});
 
-/* Load movie */
+/* ================= SEARCH MOVIE ================= */
+function searchMovie(keyword, title) {
+    if (!keyword) return;
+
+    recommendationKeyword = keyword.toLowerCase(); // 🔒 SET ONCE
+    loadMovie(title);
+}
+
+/* ================= LOAD MOVIE ================= */
 function loadMovie(title) {
-    if (!title) return;
     hideHomeSections();
 
     fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&t=${title}`)
         .then(res => res.json())
-        .then(m => {
-            if (m.Response === "False") return;
+        .then(movie => {
+            if (movie.Response === "False") return;
 
             movieContainer.innerHTML = `
                 <div class="movie-card">
-                    <img src="${m.Poster}">
-                    <h2>${m.Title}</h2>
-                    <p><strong>Genre:</strong> ${m.Genre}</p>
-                    <p class="rating">⭐ IMDb: ${m.imdbRating}</p>
-                    <p>${m.Plot}</p>
+                    <img src="${movie.Poster}">
+                    <h2>${movie.Title}</h2>
+                    <p><strong>Genre:</strong> ${movie.Genre}</p>
+                    <p class="rating">⭐ IMDb: ${movie.imdbRating}</p>
+                    <p>${movie.Plot}</p>
                 </div>
             `;
 
-            fetchMovies(m.Genre.split(",")[0], recommendContainer, 8, `Recommended ${m.Genre.split(",")[0]} Movies`);
+            showRecommendations();
         });
 }
 
-/* Helpers */
-function fetchMovies(keyword, container, limit, titleText) {
+/* ================= RECOMMENDATIONS ================= */
+function showRecommendations() {
+    recommendTitle.innerText = `Recommended "${capitalize(recommendationKeyword)}" Movies`;
+    recommendContainer.innerHTML = "";
+
+    fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${recommendationKeyword}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.Response === "False") return;
+
+            const seen = new Set();
+
+            data.Search.forEach(movie => {
+                if (seen.has(movie.Title)) return;
+                seen.add(movie.Title);
+
+                const card = document.createElement("div");
+                card.className = "recommend-card";
+                card.innerHTML = `
+                    <img src="${movie.Poster}">
+                    <p>${movie.Title}</p>
+                `;
+                card.onclick = () => loadMovie(movie.Title);
+                recommendContainer.appendChild(card);
+            });
+        });
+}
+
+/* ================= HELPERS ================= */
+function capitalize(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/* ================= HOME DATA ================= */
+function loadDefaultRecommendations() {
+    fetchMovies("Avengers", recommendContainer, 8, "Recommended Movies");
+}
+
+function loadNowPlaying() {
+    ["2024", "2023", "Marvel", "DC"].forEach(k =>
+        fetchMovies(k, nowPlayingContainer, 3)
+    );
+}
+
+function loadIndianMovies() {
+    ["Bollywood", "Hindi", "Telugu", "Tamil"].forEach(k =>
+        fetchMovies(k, indiaMoviesContainer, 3)
+    );
+}
+
+function loadTopIMDb() {
+    ["The Shawshank Redemption", "The Godfather", "The Dark Knight", "Dangal", "3 Idiots"]
+        .forEach(title => {
+            fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&t=${title}`)
+                .then(res => res.json())
+                .then(m => m.Response !== "False" && createCard(m, topImdbContainer, true));
+        });
+}
+
+function fetchMovies(keyword, container, limit, titleText = "") {
     if (titleText) recommendTitle.innerText = titleText;
     container.innerHTML = "";
 
@@ -133,15 +184,6 @@ function createCard(movie, container, showRating = false) {
         <p>${movie.Title}</p>
         ${showRating ? `<p class="rating">⭐ ${movie.imdbRating}</p>` : ""}
     `;
-    d.onclick = () => loadMovie(movie.Title);
+    d.onclick = () => searchMovie(recommendationKeyword || movie.Title, movie.Title);
     container.appendChild(d);
-}
-
-/* Carousel scroll */
-function scrollLeft(id) {
-    document.getElementById(id).scrollLeft -= 300;
-}
-
-function scrollRight(id) {
-    document.getElementById(id).scrollLeft += 300;
 }
