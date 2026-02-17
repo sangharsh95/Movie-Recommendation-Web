@@ -1,143 +1,178 @@
-/* GOOGLE FONT */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-/* RESET */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* BODY WITH ANIMATED GRADIENT */
 body {
     font-family: 'Poppins', sans-serif;
-    min-height: 100vh;
     background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
     background-size: 600% 600%;
-    animation: bgAnimation 15s ease infinite;
-    color: #fff;
-    text-align: center;
+    animation: bgMove 15s ease infinite;
+    color: white;
 }
 
-/* BACKGROUND ANIMATION */
-@keyframes bgAnimation {
+@keyframes bgMove {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-/* TITLE */
+header {
+    text-align: center;
+    padding: 25px 15px;
+}
+
 h1 {
-    margin: 30px 0;
-    font-size: 2.5rem;
+    font-size: 2.6rem;
     background: linear-gradient(90deg, #facc15, #22c55e, #3b82f6);
-    background-size: 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: textGlow 3s linear infinite;
 }
 
-/* TEXT ANIMATION */
-@keyframes textGlow {
-    0% { background-position: 0%; }
-    100% { background-position: 200%; }
-}
-
-/* SEARCH BOX */
-.search-box {
-    margin-bottom: 30px;
-}
-
-/* INPUT */
-input {
-    padding: 12px;
-    width: 260px;
-    border-radius: 8px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-}
-
-/* BUTTON */
-button {
-    padding: 12px 20px;
-    margin-left: 10px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    background: linear-gradient(90deg, #22c55e, #16a34a, #22c55e);
-    background-size: 200%;
-    transition: transform 0.3s ease;
-    animation: buttonGlow 2s linear infinite;
-}
-
-/* BUTTON HOVER */
-button:hover {
-    transform: scale(1.1);
-}
-
-/* BUTTON ANIMATION */
-@keyframes buttonGlow {
-    0% { background-position: 0%; }
-    100% { background-position: 200%; }
-}
-
-/* MOVIE CONTAINER */
-#movie-container {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-}
-
-/* MOVIE CARD */
-.movie-card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    padding: 20px;
-    width: 340px;
-    border-radius: 15px;
-    box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
-    animation: cardFloat 4s ease-in-out infinite;
-}
-
-/* CARD FLOATING EFFECT */
-@keyframes cardFloat {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0); }
-}
-
-/* POSTER */
-.movie-card img {
-    width: 100%;
-    border-radius: 12px;
+.tagline {
+    opacity: 0.8;
     margin-bottom: 15px;
 }
 
-/* TEXT */
-.movie-card h2 {
-    margin-bottom: 10px;
+.search-box {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
-.movie-card p {
-    font-size: 14px;
-    line-height: 1.5;
+.search-box input {
+    width: 320px;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
 }
 
-/* RATING */
-.rating {
-    font-size: 18px;
+.search-box button {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
     font-weight: bold;
-    color: gold;
-    margin: 10px 0;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    color: white;
 }
 
-/* RESPONSIVE */
-@media (max-width: 500px) {
-    input {
-        width: 180px;
+#suggestions {
+    max-width: 340px;
+    margin: 10px auto;
+    background: rgba(0,0,0,0.7);
+    border-radius: 8px;
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+}
+
+.suggestion-item:hover {
+    background-color: #22c55e;
+    color: black;
+}
+
+main {
+    text-align: center;
+    padding: 20px;
+}
+
+h2 {
+    margin-top: 35px;
+}
+
+#movie-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.movie-card {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    width: 360px;
+    border-radius: 15px;
+}
+
+.movie-card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.rating {
+    color: gold;
+    font-weight: bold;
+    margin: 8px 0;
+}
+
+#recommend-container,
+#now-playing,
+#india-movies,
+#top-imdb {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.recommend-card {
+    width: 180px;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.recommend-card img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* ================= MOBILE VIEW ================= */
+@media (max-width: 768px) {
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .search-box {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-box input {
+        width: 90%;
+    }
+
+    .search-box button {
+        width: 60%;
+        margin: 0 auto;
+    }
+
+    .movie-card {
+        width: 95%;
+    }
+
+    .recommend-card {
+        width: 45%;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .recommend-card {
+        width: 100%;
+    }
+
+    .search-box button {
+        width: 75%;
     }
 }
