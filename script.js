@@ -1,4 +1,4 @@
-const API_KEY = "956a86";
+const API_KEY = "";
 
 const input = document.getElementById("movieInput");
 const searchBtn = document.getElementById("searchBtn");
